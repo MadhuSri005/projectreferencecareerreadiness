@@ -50,10 +50,22 @@ export default function ResumeAnalyzer() {
     },
   });
 
+  const MAX_RESUME_LENGTH = 50000;
+  const MAX_JOB_DESC_LENGTH = 10000;
+
   const analyzeMutation = useMutation({
     mutationFn: async () => {
-      const resumeSkills = extractSkills(resumeText);
-      const jobSkills = extractSkills(jobDescription);
+      if (resumeText.trim().length === 0 || jobDescription.trim().length === 0) {
+        throw new Error("Both resume and job description are required.");
+      }
+      if (resumeText.length > MAX_RESUME_LENGTH) {
+        throw new Error(`Resume text must be under ${MAX_RESUME_LENGTH.toLocaleString()} characters.`);
+      }
+      if (jobDescription.length > MAX_JOB_DESC_LENGTH) {
+        throw new Error(`Job description must be under ${MAX_JOB_DESC_LENGTH.toLocaleString()} characters.`);
+      }
+      const resumeSkills = extractSkills(resumeText.trim());
+      const jobSkills = extractSkills(jobDescription.trim());
       const { matched, missing, score } = matchSkills(resumeSkills, jobSkills);
 
       const { error } = await supabase.from("resume_analyses").insert({
@@ -96,7 +108,9 @@ export default function ResumeAnalyzer() {
               onChange={(e) => setResumeText(e.target.value)}
               placeholder="Paste your resume text here..."
               className="min-h-[200px]"
+              maxLength={MAX_RESUME_LENGTH}
             />
+            <p className="text-xs text-muted-foreground text-right mt-1">{resumeText.length.toLocaleString()}/{MAX_RESUME_LENGTH.toLocaleString()}</p>
           </CardContent>
         </Card>
 
@@ -113,7 +127,9 @@ export default function ResumeAnalyzer() {
               onChange={(e) => setJobDescription(e.target.value)}
               placeholder="Paste the job description here..."
               className="min-h-[200px]"
+              maxLength={MAX_JOB_DESC_LENGTH}
             />
+            <p className="text-xs text-muted-foreground text-right mt-1">{jobDescription.length.toLocaleString()}/{MAX_JOB_DESC_LENGTH.toLocaleString()}</p>
           </CardContent>
         </Card>
       </div>
