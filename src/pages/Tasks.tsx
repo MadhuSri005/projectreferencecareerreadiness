@@ -23,12 +23,18 @@ export default function Tasks() {
     },
   });
 
+  const MAX_TASK_TITLE_LENGTH = 500;
+
   const addTask = useMutation({
     mutationFn: async () => {
-      if (!newTask.trim()) return;
+      const trimmed = newTask.trim();
+      if (!trimmed) return;
+      if (trimmed.length > MAX_TASK_TITLE_LENGTH) {
+        throw new Error(`Task title must be under ${MAX_TASK_TITLE_LENGTH} characters.`);
+      }
       const { error } = await supabase.from("tasks").insert({
         user_id: user!.id,
-        title: newTask.trim(),
+        title: trimmed,
         status: "pending",
       });
       if (error) throw error;
@@ -79,6 +85,7 @@ export default function Tasks() {
           onChange={(e) => setNewTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTask.mutate()}
           className="flex-1"
+          maxLength={MAX_TASK_TITLE_LENGTH}
         />
         <Button onClick={() => addTask.mutate()} disabled={!newTask.trim() || addTask.isPending}>
           <Plus className="w-4 h-4 mr-1" /> Add
