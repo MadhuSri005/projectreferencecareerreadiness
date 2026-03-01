@@ -26,12 +26,7 @@ const Index = () => {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(168_76%_42%/0.08),transparent_60%)]" />
         <nav className="relative max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary" />
-            </div>
-            <span className="font-bold text-lg">CareerReady</span>
-          </div>
+          <span className="font-bold text-lg">Career Navigator</span>
           <Button variant="secondary" size="sm" onClick={() => navigate("/auth")}>
             Sign In
           </Button>
